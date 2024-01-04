@@ -609,7 +609,7 @@ function GladiusEx:SetupOptions()
 
     local options = {
         type = "group",
-        name = "GladiusEx",
+        name = "GladiusEx - @project-version@",
         get = getOption,
         set = setOption,
         args = {
