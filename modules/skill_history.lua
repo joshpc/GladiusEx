@@ -129,16 +129,13 @@ end
 function SkillHistory:Test(unit)
 	self:ClearUnit(unit)
 
-	-- local spells = { GetSpecializationSpells(GetSpecialization()) }
-	-- for i = 1, #spells / 2 do
-	-- 	self:QueueSpell(unit, spells[i * 2 - 1], GetTime())
-	-- end
 	local specID, class, race
 	specID = GladiusEx.testing[unit].specID
 	class = GladiusEx.testing[unit].unitClass
 	race = GladiusEx.testing[unit].unitRace
 	local n = 1
-	for spellid, spelldata in LibStub("LibCooldownTracker-1.0"):IterateCooldowns(class, specID, race) do
+
+	for spellid, spelldata in LibStub("LibCooldownTracker-2.0"):IterateCooldowns(class, specID, race) do
 		self:QueueSpell(unit, spellid, GetTime() + n * self.db[unit].EnterAnimDuration)
 		n = n + 1
 	end

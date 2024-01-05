@@ -35,8 +35,8 @@ externals:
     url: https://github.com/WeakAuras/LibRangeCheck-3.0
   libs/LibSharedMedia-3.0:
     url: svn://svn.wowace.com/wow/libsharedmedia-3-0/mainline/trunk
-  libs/LibCooldownTracker-1.0:
-    url: https://github.com/vendethiel/LibCooldownTracker-10
+  libs/LibCooldownTracker-2.0:
+    url: https://github.com/joshpc/LibCooldownTracker
   libs/DRList-1.0:
     url: https://github.com/wardz/DRList-1.0
   libs/LibCustomGlow-1.0:

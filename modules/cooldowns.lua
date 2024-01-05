@@ -1,7 +1,7 @@
 local GladiusEx = _G.GladiusEx
 local L = LibStub("AceLocale-3.0"):GetLocale("GladiusEx")
 local LSM = LibStub("LibSharedMedia-3.0")
-local CT = LibStub("LibCooldownTracker-1.0")
+local CT = LibStub("LibCooldownTracker-2.0")
 local LCG = LibStub("LibCustomGlow-1.0")
 local fn = LibStub("LibFunctional-1.0")
 
