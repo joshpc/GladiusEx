@@ -29,7 +29,6 @@ GladiusEx.defaults = {
                 unitClass = "MAGE",
                 unitRace = "Scourge",
                 specID = 64,
-                covenant = "NIGHTFAE"
             },
             ["arena2"] = {
                 health = 275000,
@@ -40,7 +39,6 @@ GladiusEx.defaults = {
                 unitClass = "HUNTER",
                 unitRace = "NightElf",
                 specID = 253,
-                covenant = "NECROLORD"
             },
             ["arena3"] = {
                 health = 220000,
@@ -51,7 +49,6 @@ GladiusEx.defaults = {
                 unitClass = "DRUID",
                 unitRace = "Worgen",
                 specID = 105,
-                covenant = "KYRIAN"
             },
             ["arena4"] = {
                 health = 240000,
@@ -62,7 +59,6 @@ GladiusEx.defaults = {
                 unitClass = "ROGUE",
                 unitRace = "Human",
                 specID = 261,
-                covenant = "VENTHYR"
             },
             ["arena5"] = {
                 health = 100000,
@@ -73,7 +69,6 @@ GladiusEx.defaults = {
                 unitClass = "WARRIOR",
                 unitRace = "Gnome",
                 specID = 71,
-                covenant = "VENTHYR"
             },
             ["player"] = {
                 health = 250000,
@@ -94,7 +89,6 @@ GladiusEx.defaults = {
                 unitClass = "SHAMAN",
                 unitRace = "Pandaren",
                 specID = 269,
-                covenant = "NIGHTFAE"
             },
             ["party2"] = {
                 health = 220000,
@@ -105,7 +99,6 @@ GladiusEx.defaults = {
                 unitClass = "WARLOCK",
                 unitRace = "Orc",
                 specID = 267,
-                covenant = "NECROLORD"
             },
             ["party3"] = {
                 health = 100000,
@@ -116,7 +109,6 @@ GladiusEx.defaults = {
                 unitClass = "WARRIOR",
                 unitRace = "Troll",
                 specID = 71,
-                covenant = "KYRIAN"
             },
             ["party4"] = {
                 health = 200000,
@@ -127,12 +119,11 @@ GladiusEx.defaults = {
                 unitClass = "DEATHKNIGHT",
                 unitRace = "Dwarf",
                 specID = 252,
-                covenant = "VENTHYR"
             }
         }
         --[===[@debug@
 		debug = true,
-		--@end-debug@]==]]===]
+		--@end-debug@]==]
     }
 }
 

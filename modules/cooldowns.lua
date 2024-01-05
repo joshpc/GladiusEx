@@ -50,31 +50,21 @@ local function MakeGroupDb(settings)
         cooldownsCatPriority = {
             "pvp_trinket",
             "dispel",
-            "mass_dispel",
-            "immune",
             "interrupt",
-            "silence",
             "stun",
-            "knockback",
             "cc",
             "offensive",
             "defensive",
-            "heal",
             "uncat"
         },
         cooldownsCatColors = {
             ["pvp_trinket"] = {r = 0, g = 0, b = 0},
             ["dispel"] = {r = 1, g = 1, b = 1},
-            ["mass_dispel"] = {r = 1, g = 1, b = 1},
-            ["immune"] = {r = 0, g = 0, b = 1},
             ["interrupt"] = {r = 1, g = 0, b = 1},
-            ["silence"] = {r = 1, g = 0, b = 1},
             ["stun"] = {r = 0, g = 1, b = 1},
-            ["knockback"] = {r = 0, g = 1, b = 1},
             ["cc"] = {r = 0, g = 1, b = 1},
             ["offensive"] = {r = 1, g = 0, b = 0},
             ["defensive"] = {r = 0, g = 1, b = 0},
-            ["heal"] = {r = 0, g = 1, b = 0},
             ["uncat"] = {r = 1, g = 1, b = 1}
         },
         cooldownsHideTalentsUntilDetected = true,
@@ -252,7 +242,6 @@ function Cooldowns:OnEnable()
     CT.RegisterCallback(self, "LCT_CooldownUsed")
     CT.RegisterCallback(self, "LCT_CooldownsReset")
     CT.RegisterCallback(self, "LCT_CooldownDetected")
-    CT.RegisterCallback(self, "LCT_CovenantDetected")
     self:RegisterEvent("UNIT_NAME_UPDATE")
     self:RegisterMessage("GLADIUS_SPEC_UPDATE")
 end
@@ -332,13 +321,6 @@ end
 
 function Cooldowns:LCT_CooldownDetected(event, unit, spellid)
     self:UpdateIcons(unit)
-end
-
-function Cooldowns:LCT_CovenantDetected(event, unit, covenant)
-    if GladiusEx:IsHandledUnit(unit) then
-        GladiusEx.buttons[unit].covenant = covenant
-        self:UpdateIcons(unit)
-    end
 end
 
 local function CooldownFrame_Pulse(frame, duration, scale)
@@ -531,14 +513,6 @@ local function GetSpellSortScore(unit, group, spellid)
         return 0
     end
 
-    if spelldata.replaces then
-        spellid = spelldata.replaces
-        spelldata = CT:GetCooldownData(spelldata.replaces)
-    end
-    if not spelldata then
-        return 0
-    end
-
     if sortscore[spellid] then
         return sortscore[spellid]
     end
@@ -584,19 +558,17 @@ function Cooldowns:UpdateIcons(unit)
 end
 
 local function GetUnitInfo(unit)
-    local specID, class, race, covenant
+    local specID, class, race
     if GladiusEx:IsTesting(unit) then
         specID = GladiusEx.testing[unit].specID
         class = GladiusEx.testing[unit].unitClass
         race = GladiusEx.testing[unit].unitRace
-        covenant = GladiusEx.testing[unit].covenant
     elseif GladiusEx.buttons[unit] then
         specID = GladiusEx.buttons[unit].specID
         class = GladiusEx.buttons[unit].class or select(2, UnitClass(unit))
         race = select(2, UnitRace(unit))
-        covenant = GladiusEx.buttons[unit].covenant
     end
-    return specID, class, race, covenant
+    return specID, class, race
 end
 
 local function GetUnitFaction(unit)
@@ -612,13 +584,13 @@ local unit_sorted_spells = {}
 local function GetCooldownList(unit, group)
     local db = Cooldowns:GetGroupDB(unit, group)
 
-    local specID, class, race, covenant = GetUnitInfo(unit)
+    local specID, class, race = GetUnitInfo(unit)
 
     -- generate list of valid cooldowns for this unit
     wipe(spell_list)
-    for spellid, spelldata in CT:IterateCooldowns(class, specID, race, covenant) do
+    for spellid, spelldata in CT:IterateCooldowns(class, specID, race) do
         -- check if the spell is enabled by the user
-        if db.cooldownsSpells[spellid] or (spelldata.replaces and db.cooldownsSpells[spelldata.replaces]) then
+        if db.cooldownsSpells[spellid] then
             local tracked = CT:GetUnitCooldownInfo(unit, spellid)
             local detected = tracked and tracked.detected
             -- check if the spell has a cooldown valid for an arena, and check if it is a talent that has not yet been detected
@@ -630,10 +602,6 @@ local function GetCooldownList(unit, group)
              then
                 -- check if the spell requires an aura (XXX unused atm?)
                 if not spelldata.requires_aura or AuraUtil.FindAuraByName(spelldata.requires_aura_name, unit, "HELPFUL") then
-                    if spelldata.replaces then
-                        -- remove replaced spell if detected
-                        spell_list[spelldata.replaces] = false
-                    end
                     -- do not overwrite if this spell has been replaced
                     if spell_list[spellid] == nil then
                         spell_list[spellid] = true
@@ -2198,11 +2166,8 @@ function Cooldowns:MakeGroupOptions(unit, group)
             if spelldata.offensive then
                 tinsert(cats, L["cat:offensive"])
             end
-            if spelldata.defensive then
+            if spelldata.defensive or spelldata.counterCC or spelldata.externalDefensive or spelldata.raidDefensive then
                 tinsert(cats, L["cat:defensive"])
-            end
-            if spelldata.silence then
-                tinsert(cats, L["cat:silence"])
             end
             if spelldata.interrupt then
                 tinsert(cats, L["cat:interrupt"])
@@ -2210,28 +2175,7 @@ function Cooldowns:MakeGroupOptions(unit, group)
             if spelldata.dispel then
                 tinsert(cats, L["cat:dispel"])
             end
-            if spelldata.mass_dispel then
-                tinsert(cats, L["cat:mass_dispel"])
-            end
-            if spelldata.heal then
-                tinsert(cats, L["cat:heal"])
-            end
-            if spelldata.knockback then
-                tinsert(cats, L["cat:knockback"])
-            end
-            if spelldata.stun then
-                tinsert(cats, L["cat:stun"])
-            end
-            if spelldata.immune then
-                tinsert(cats, L["cat:immune"])
-            end
-            if spelldata.covenant then
-                tinsert(cats, L["cat:covenant"])
-            end
-            -- specID takes category precedence over talent, so specify it to make it clear
-            if spelldata.specID and spelldata.talent then
-                tinsert(cats, L["cat:talent"])
-            end
+
             local catstr
             if #cats > 0 then
                 catstr = "|cff7f7f7f(" .. strjoin(", ", unpack(cats)) .. ")|r"
@@ -2267,9 +2211,6 @@ function Cooldowns:MakeGroupOptions(unit, group)
                 local extradesc = {}
                 if spelldata.duration then
                     table.insert(extradesc, string.format(L["Duration: %is"], spelldata.duration))
-                end
-                if spelldata.replaces then
-                    table.insert(extradesc, string.format(L["Replaces: %s"], GetSpellInfo(spelldata.replaces)))
                 end
                 if spelldata.requires_aura then
                     table.insert(
@@ -2314,9 +2255,6 @@ function Cooldowns:MakeGroupOptions(unit, group)
                 if spelldata.charges then
                     table.insert(extradesc, string.format(L["Charges: %i"], spelldata.charges))
                 end
-                if spelldata.covenant then
-                    table.insert(extradesc, string.format(L["Covenant: %s"], spelldata.covenant))
-                end
                 if #extradesc > 0 then
                     spelldesc = spelldesc .. "\n|cff9f9f9f" .. table.concat(fn.sort(extradesc), "\n|cff9f9f9f")
                 end
@@ -2337,10 +2275,9 @@ function Cooldowns:MakeGroupOptions(unit, group)
                 end,
                 order = spelldata.name:byte(1) * 0xff + spelldata.name:byte(2)
             }
+
             if spelldata.class then
-                local ico =
-                    spelldata.class == "DEATHKNIGHT" and [[Interface\ICONS\Spell_DEATHKNIGHT_classicon]] or
-                    [[Interface\ICONS\ClassIcon_]] .. spelldata.class
+                local ico = spelldata.class == "DEATHKNIGHT" and [[Interface\ICONS\Spell_DEATHKNIGHT_classicon]] or [[Interface\ICONS\ClassIcon_]] .. spelldata.class
                 if not args[spelldata.class] then
                     args[spelldata.class] = {
                         type = "group",
@@ -2353,82 +2290,9 @@ function Cooldowns:MakeGroupOptions(unit, group)
                         args = {}
                     }
                 end
-                if spelldata.specID then
-                    -- spec
-                    for _, specID in ipairs(spelldata.specID) do
-                        if not args[spelldata.class].args["spec" .. specID] then
-                            local _, name, description, icon, role, class =
-                                GladiusEx.Data.GetSpecializationInfoByID(specID)
-                            args[spelldata.class].args["spec" .. specID] = {
-                                type = "group",
-                                name = name or "",
-                                icon = icon or "",
-                                disabled = function()
-                                    return not self:IsUnitEnabled(unit)
-                                end,
-                                order = 3 + specID,
-                                args = {}
-                            }
-                        end
-                        args[spelldata.class].args["spec" .. specID].args["spell" .. spellid] = spellconfig
-                    end
-                elseif spelldata.covenant then
-                    -- covenant
-                    if not args[spelldata.class].args.covenant then
-                        args[spelldata.class].args.covenant = {
-                            type = "group",
-                            name = L["Covenant"],
-                            disabled = function()
-                                return not self:IsUnitEnabled(unit)
-                            end,
-                            order = 1000,
-                            args = {}
-                        }
-                    end
-                    args[spelldata.class].args.covenant.args["spell" .. spellid] = spellconfig
-                elseif spelldata.talent then
-                    -- talent
-                    if not args[spelldata.class].args.talents then
-                        args[spelldata.class].args.talents = {
-                            type = "group",
-                            name = L["Talent"],
-                            disabled = function()
-                                return not self:IsUnitEnabled(unit)
-                            end,
-                            order = 2,
-                            args = {}
-                        }
-                    end
-                    args[spelldata.class].args.talents.args["spell" .. spellid] = spellconfig
-                elseif spelldata.pet then
-                    -- pet
-                    if not args[spelldata.class].args.pets then
-                        args[spelldata.class].args.pets = {
-                            type = "group",
-                            name = L["Pet"],
-                            disabled = function()
-                                return not self:IsUnitEnabled(unit)
-                            end,
-                            order = 1000,
-                            args = {}
-                        }
-                    end
-                    args[spelldata.class].args.pets.args["spell" .. spellid] = spellconfig
-                else
-                    -- baseline
-                    if not args[spelldata.class].args.base then
-                        args[spelldata.class].args.base = {
-                            type = "group",
-                            name = "Baseline",
-                            disabled = function()
-                                return not self:IsUnitEnabled(unit)
-                            end,
-                            order = 1,
-                            args = {}
-                        }
-                    end
-                    args[spelldata.class].args.base.args["spell" .. spellid] = spellconfig
-                end
+
+                -- We no longer break things up by spec id since many abilities are in the class talent trees. Easier just to display one list, and let the user scroll a little.
+                args[spelldata.class].args["spell" .. spellid] = spellconfig
             elseif spelldata.race then
                 -- racial
                 if not args[spelldata.race] then
@@ -2462,20 +2326,6 @@ function Cooldowns:MakeGroupOptions(unit, group)
                     }
                 end
                 args.items.args["spell" .. spellid] = spellconfig
-            elseif spelldata.covenant then
-                -- covenant
-                if not args.covenant then
-                    args.covenant = {
-                        type = "group",
-                        name = L["Covenant"],
-                        disabled = function()
-                            return not self:IsUnitEnabled(unit)
-                        end,
-                        order = 14,
-                        args = {}
-                    }
-                end
-                args.covenant.args["spell" .. spellid] = spellconfig
             elseif spelldata.pvp_trinket then
                 -- pvp trinket
                 if not args.pvp_trinket then

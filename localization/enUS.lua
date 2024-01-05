@@ -2,20 +2,13 @@
 
 -- Cooldowns module
 L["cat:pvp_trinket"] = "PvP Trinket"
-L["cat:mass_dispel"] = "Mass Dispel"
 L["cat:cc"] = "CC"
 L["cat:offensive"] = "Offensive"
 L["cat:defensive"] = "Defensive"
-L["cat:silence"] = "Silence"
 L["cat:interrupt"] = "Interrupt"
 L["cat:dispel"] = "Dispel"
-L["cat:heal"] = "Heal"
-L["cat:knockback"] = "Knockback"
 L["cat:stun"] = "Stun"
-L["cat:immune"] = "Immune"
-L["cat:talent"] = "Talent"
 L["cat:uncat"] = "Uncategorized"
-L["cat:covenant"] = "Covenant"
 
 -- Tags module
 L["WARRIOR:short"] = "Warr"
@@ -221,7 +214,6 @@ L["Center left"] = true
 L["Center right"] = true
 L["Center"] = true
 L["Charges: %i"] = true
-L["Covenant: %s"] = true
 L["Choose how low an enemy must be before low health is announced"] = true
 L["Choose how your announcements are displayed"] = true
 L["Class color"] = true
@@ -481,7 +473,6 @@ L["Relative point of the frame"] = true
 L["Relative point"] = true
 L["Remaining time"] = true
 L["Remove this cooldowns group"] = true
-L["Replaces: %s"] = true
 L["Required aura: %s"] = true
 L["Reset all arena settings to their default values"] = true
 L["Reset all party settings to their default values"] = true
@@ -549,7 +540,6 @@ L["Stop testing"] = true
 L["Tag settings"] = true
 L["Tag"] = true
 L["Tag: %s"] = true
-L["Talent"] = true
 L["TargetBar"] = true
 L["Test 2v2"] = true
 L["Test 3v3"] = true
@@ -664,7 +654,6 @@ L["Y offset of the frame"] = true
 L["Y offset"] = true
 L["Hide self frame"] = true
 L["Hide the player's frame"] = true
-L["Covenant"] = true
 L["How long should the scale animation last"] = true
 L["The size the the icon should scale up to when the cooldown goes off CD"] = true
 L["The size the the icon should scale up to when the cooldown gets used"] = true
