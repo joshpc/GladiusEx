@@ -123,7 +123,7 @@ GladiusEx.defaults = {
         }
         --[===[@debug@
 		debug = true,
-		--@end-debug@]==]
+		--@end-debug@]===]
     }
 }
 
